@@ -20,9 +20,9 @@ enum EventValidator {
         var errorDescription: String? {
             switch self {
             case .emptyTitle:
-                return String(localized: "事件标题不能为空。", comment: "Validation: empty title")
+                return NSLocalizedString("事件标题不能为空。", comment: "Validation: empty title")
             case .endNotAfterStart:
-                return String(localized: "结束时间必须晚于开始时间。", comment: "Validation: end before start")
+                return NSLocalizedString("结束时间必须晚于开始时间。", comment: "Validation: end before start")
             }
         }
 
