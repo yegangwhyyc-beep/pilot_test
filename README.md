@@ -103,6 +103,47 @@ MacCalendar/
 - **通知标识**：每条事件的通知请求 ID 为
   `maccalendar.event-reminder.<UUID>`，编辑时先取消旧请求再重新排程。
 
+## 2FA 验证码生成工具（TwoFactorAuth / `totp`）
+
+仓库同时包含一个跨平台的 Swift Package：一个 TOTP/HOTP 算法库和一个 `totp`
+命令行工具，用于生成 Google Authenticator 等应用兼容的两步验证码。
+
+- 标准：RFC 4226（HOTP）、RFC 6238（TOTP）、RFC 4648 Base32
+- 支持 SHA1 / SHA256 / SHA512、6–8 位数字、自定义时间步长
+- 支持直接传入 Base32 密钥，或解析 `otpauth://totp/...` 配置 URI
+  （密钥、issuer、digits、period、algorithm 均从 URI 读取）
+- 加密原语使用 [apple/swift-crypto](https://github.com/apple/swift-crypto)，
+  在 Linux 与 macOS 上均可构建（macOS 平台要求 macOS 12+）
+
+### 构建与测试
+
+```bash
+swift build
+swift test
+```
+
+测试使用 RFC 4226 / RFC 6238 官方测试向量和 RFC 4648 Base32 向量，
+并覆盖 `otpauth://` URI 解析的正常与错误路径。
+
+### 使用示例
+
+```bash
+# 用 Base32 共享密钥生成当前验证码
+swift run totp --secret JBSWY3DPEHPK3PXP
+
+# 解析二维码里的 otpauth 配置 URI
+swift run totp -u "otpauth://totp/ACME:alice@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME"
+
+# 固定时间 / 算法 / 位数（便于核对）
+swift run totp -s GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ -t 59 -d 8
+# 94287082
+
+# 持续运行，每个时间步打印新验证码
+swift run totp -s JBSWY3DPEHPK3PXP --follow
+```
+
+退出码：成功为 0；参数或密钥错误为 2（错误信息输出到 stderr）。
+
 ## 已知限制（交付时未在 macOS 上验证）
 
 本工程由 Linux 环境生成，**未经过 Xcode 编译与 UI 运行验证**。已完成的静态自检
