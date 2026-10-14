@@ -48,7 +48,7 @@ xcodebuild -project MacCalendar.xcodeproj -scheme MacCalendar \
 产物路径一般为：
 `~/Library/Developer/Xcode/DerivedData/MacCalendar-*/Build/Products/Debug/MacCalendar.app`
 
-### 在 Linux 上运行同一套逻辑测试（无需 Xcode）
+### 在 Linux 上不通过 Xcode 直接运行（无需 macOS）
 
 仓库根目录的 `Package.swift` 是一个仅编译纯逻辑层的 SwiftPM 切片
 （只包含 `MacCalendar/Utilities` 与 `MacCalendarTests/`，不含 SwiftUI/SwiftData），
@@ -56,8 +56,17 @@ xcodebuild -project MacCalendar.xcodeproj -scheme MacCalendar \
 
 ```bash
 # 需要 Swift 5.9+（已在 Ubuntu 24.04 + Swift 6.0.3 验证）
+
+# 1) 运行全部逻辑单元测试
 swift test
+
+# 2) 直接编译并运行命令行演示程序（月视图/周视图/事件过滤/搜索/表单校验）
+#    可执行文件构建在 .build/debug/CalendarDemo，之后可脱离 swift 直接运行
+swift run CalendarDemo
 ```
+
+`Tools/CalendarDemo/main.swift` 链接的是 App 的真实逻辑源码
+（`MacCalendar/Utilities/`），不是另写的模拟实现。
 
 ## 单元测试说明
 
@@ -98,9 +107,12 @@ MacCalendar/
 │   ├── Info.plist
 │   └── MacCalendar.entitlements
 └── MacCalendarTests/
-    ├── CalendarMathTests.swift
-    ├── EventValidatorTests.swift
-    └── MacCalendarTests.entitlements
+│   ├── CalendarMathTests.swift
+│   ├── EventValidatorTests.swift
+│   └── MacCalendarTests.entitlements
+├── Package.swift                         # SwiftPM 切片：Linux 下 swift test / swift run
+└── Tools/
+    └── CalendarDemo/main.swift           # 不通过 Xcode 的命令行演示（链接真实逻辑层）
 ```
 
 ## 设计说明
@@ -116,8 +128,9 @@ MacCalendar/
 
 ## 已知限制
 
-- 纯逻辑层（`MacCalendar/Utilities`）与全部 12 个逻辑单元测试**已在 Linux
-  Swift 6.0.3 实际编译并运行通过**（`swift test`，12/12 passed）。
+- 纯逻辑层（`MacCalendar/Utilities`）、全部 12 个逻辑单元测试以及命令行演示
+  **已在 Linux Swift 6.0.3 实际编译并运行通过**（`swift test` 12/12 passed；
+  `swift run CalendarDemo` 输出正确的月网格、跨天事件与校验结果）。
 - SwiftUI 界面、SwiftData 持久化与本地通知**尚未在 macOS/Xcode 做编译与
   UI 运行验证**。请在 macOS + Xcode 上执行上述 `xcodebuild test` 与 `⌘R`
   运行确认。如首次打开 Xcode 提示 “Resolve Package / Validate Settings”，

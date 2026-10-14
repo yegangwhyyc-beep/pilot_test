@@ -16,6 +16,11 @@ let package = Package(
     name: "MacCalendar",
     targets: [
         .target(name: "MacCalendar", path: "MacCalendar/Utilities"),
+        .executableTarget(
+            name: "CalendarDemo",
+            dependencies: ["MacCalendar"],
+            path: "Tools/CalendarDemo"
+        ),
         .testTarget(
             name: "MacCalendarTests",
             dependencies: ["MacCalendar"],
