@@ -106,11 +106,11 @@ private struct MonthDayCell: View {
         .padding(3)
         .background(
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color.primary.opacity(0.02))
+                .fill(CalendarTheme.dayCellBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                .stroke(CalendarTheme.gridSeparator, lineWidth: 0.5)
         )
         .contentShape(Rectangle())
         .onTapGesture { onSelectDay() }
@@ -195,9 +195,13 @@ private struct WeekDayColumn: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(CalendarTheme.dayCellBackground)
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                .stroke(CalendarTheme.gridSeparator, lineWidth: 0.5)
         )
     }
 }
